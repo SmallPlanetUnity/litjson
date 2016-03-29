@@ -730,7 +730,7 @@ namespace LitJson
 
 			#region UnityEngine specific
 			// TODO: test if using unity
-			/*#if _SOMETHING_
+			//#if _SOMETHING_
 
 			if (obj is UnityEngine.Vector2) {
 				writer.Write((UnityEngine.Vector2) obj);
@@ -742,7 +742,37 @@ namespace LitJson
 				return;
 			}
 
-			#endif*/
+			if (obj is UnityEngine.Color) {
+				writer.Write( (UnityEngine.Color) obj );
+				return;
+			}
+
+			if (obj is UnityEngine.Vector4) {
+				writer.Write ((UnityEngine.Vector4)obj);
+				return;
+			}
+
+			if (obj is UnityEngine.Quaternion) {
+				writer.Write ((UnityEngine.Quaternion)obj);
+				return;
+			}
+
+			if (obj is UnityEngine.Matrix4x4) {
+				writer.Write ((UnityEngine.Matrix4x4)obj);
+				return;
+			}
+
+			if (obj is UnityEngine.Ray) {
+				writer.Write ((UnityEngine.Ray)obj);
+				return;
+			}
+
+			if (obj is UnityEngine.RaycastHit) {
+				writer.Write ((UnityEngine.RaycastHit)obj);
+				return;
+			}
+
+			//#endif
 			#endregion
 
             if (obj is String) {
