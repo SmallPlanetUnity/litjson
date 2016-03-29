@@ -593,6 +593,16 @@ namespace LitJson
                 delegate (object obj, JsonWriter writer) {
                     writer.Write ((ulong) obj);
                 };
+
+			base_exporters_table [typeof(float)] =
+				delegate (object obj, JsonWriter writer) {
+					writer.Write (Convert.ToDouble ((float)obj));
+				};
+
+			base_exporters_table [typeof(Int64)] =
+				delegate (object obj, JsonWriter writer) {
+					writer.Write ((Int64)obj);
+				};
         }
 
         private static void RegisterBaseImporters ()
@@ -653,6 +663,11 @@ namespace LitJson
             RegisterImporter (base_importers_table, typeof (double),
                               typeof (decimal), importer);
 
+			importer = delegate (object input) {
+				return Convert.ToSingle ((float)(double) input);
+			};
+			RegisterImporter (base_importers_table, typeof (double),
+							typeof (float), importer);
 
             importer = delegate (object input) {
                 return Convert.ToUInt32 ((long) input);
@@ -671,6 +686,12 @@ namespace LitJson
             };
             RegisterImporter (base_importers_table, typeof (string),
                               typeof (DateTime), importer);
+			
+			importer = delegate(object input) {
+				return Convert.ToInt64 ((Int32) input);
+			};
+			RegisterImporter (base_importers_table, typeof (Int32),
+							typeof (Int64), importer);
         }
 
         private static void RegisterImporter (
@@ -706,6 +727,23 @@ namespace LitJson
 
                 return;
             }
+
+			#region UnityEngine specific
+			// TODO: test if using unity
+			/*#if _SOMETHING_
+
+			if (obj is UnityEngine.Vector2) {
+				writer.Write((UnityEngine.Vector2) obj);
+				return;
+			}
+
+			if (obj is UnityEngine.Vector3) {
+				writer.Write( (UnityEngine.Vector3) obj );
+				return;
+			}
+
+			#endif*/
+			#endregion
 
             if (obj is String) {
                 writer.Write ((string) obj);
@@ -804,17 +842,27 @@ namespace LitJson
             writer.WriteObjectStart ();
             foreach (PropertyMetadata p_data in props) {
                 if (p_data.IsField) {
-                    writer.WritePropertyName (p_data.Info.Name);
-                    WriteValue (((FieldInfo) p_data.Info).GetValue (obj),
-                                writer, writer_is_private, depth + 1);
+					FieldInfo _fieldInfo = ((FieldInfo)p_data.Info);
+					// make sure the object is serializable
+					if (!_fieldInfo.IsNotSerialized) {
+						object retrievedValue = _fieldInfo.GetValue (obj);
+						// make sure we're not just looping on the same object
+						if (retrievedValue != null && !retrievedValue.Equals (obj)) {
+							writer.WritePropertyName (p_data.Info.Name);
+							WriteValue (retrievedValue, writer, writer_is_private, depth + 1);
+						}
+					}
                 }
                 else {
                     PropertyInfo p_info = (PropertyInfo) p_data.Info;
 
                     if (p_info.CanRead) {
-                        writer.WritePropertyName (p_data.Info.Name);
-                        WriteValue (p_info.GetValue (obj, null),
-                                    writer, writer_is_private, depth + 1);
+						object retrievedValue = p_info.GetValue (obj, null);
+						// make sure we're not just looping on the same object
+						if (retrievedValue != null && !retrievedValue.Equals (obj)) {
+							writer.WritePropertyName (p_data.Info.Name);
+							WriteValue (retrievedValue, writer, writer_is_private, depth + 1);
+						}
                     }
                 }
             }

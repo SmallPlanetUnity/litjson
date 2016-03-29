@@ -376,6 +376,29 @@ namespace LitJson
             context.ExpectingValue = false;
         }
 
+		#region Unity specific
+		// TODO: test if using unity
+		/*#if _SOMETHING_
+
+		public void Write (UnityEngine.Vector2 vector2)
+		{
+			if (vector2 == null) return;
+			WriteObjectStart();
+			Put( string.Format( "\"x\":{0},\"y\":{1}", vector2.x, vector2.y ) );
+			WriteObjectEnd();
+		}
+
+		public void Write (UnityEngine.Vector3 vector3)
+		{
+			if (vector3 == null) return;
+			WriteObjectStart();
+			Put( string.Format( "\"x\":{0},\"y\":{1},\"z\":{2}", vector3.x, vector3.y, vector3.z ) );
+			WriteObjectEnd();
+		}
+
+		#endif*/
+		#endregion
+
         public void WriteArrayEnd ()
         {
             DoValidation (Condition.InArray);
