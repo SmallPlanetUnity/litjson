@@ -365,7 +365,7 @@ namespace LitJson
             context.ExpectingValue = false;
         }
 
-        [CLSCompliant(false)]
+        //[CLSCompliant(false)]
         public void Write (ulong number)
         {
             DoValidation (Condition.Value);
@@ -375,93 +375,6 @@ namespace LitJson
 
             context.ExpectingValue = false;
         }
-
-		#region Unity specific
-		// TODO: test if using unity
-		//#if _SOMETHING_
-
-		public void Write (UnityEngine.Vector2 vector2)
-		{
-			if (vector2 == null) return;
-			WriteObjectStart();
-			Put( string.Format( "\"x\":{0},\"y\":{1}", vector2.x, vector2.y ) );
-			WriteObjectEnd();
-		}
-
-		public void Write (UnityEngine.Vector3 vector3)
-		{
-			if (vector3 == null) return;
-			WriteObjectStart();
-			Put( string.Format( "\"x\":{0},\"y\":{1},\"z\":{2}", vector3.x, vector3.y, vector3.z ) );
-			WriteObjectEnd();
-		}
-
-		public void Write (UnityEngine.Color color)
-		{
-			if (color == null) return;
-			WriteObjectStart();
-			Put( string.Format( "\"r\":{0},\"g\":{1},\"b\":{2},\"a\":{3}", color.r, color.g, color.b,color.a ) );
-			WriteObjectEnd();
-		}
-
-		public void Write (UnityEngine.Vector4 v4)
-		{
-			if (v4 == null)
-				return;
-
-			WriteObjectStart ();
-			Put (string.Format ("\"x\":{0},\"y\":{1},\"z\":{2},\"w\":{3}", v4.x, v4.y, v4.z, v4.w));
-			WriteObjectEnd ();
-		}
-
-		public void Write (UnityEngine.Quaternion q)
-		{
-			if (q == null)
-				return;
-
-			WriteObjectStart ();
-			Put (string.Format ("\"x\":{0},\"y\":{1},\"z\":{2},\"w\":{3}", q.x, q.y, q.z, q.w));
-			WriteObjectEnd ();
-		}
-
-		public void Write (UnityEngine.Matrix4x4 m)
-		{
-			if (m == null)
-				return;
-
-			WriteObjectStart ();
-			Put (string.Format ("\"m00\":{0},\"m33\":{1},\"m23\":{2},\"m13\":{3},\"m03\":{4},\"m32\":{5},\"m12\":{6},\"m02\":{7},\"m22\":{8},\"m21\":{9},\"m11\":{10},\"m01\":{11},\"m30\":{12},\"m20\":{13},\"m10\":{14},\"m31\":{15}", 
-				m.m00, m.m33, m.m23, m.m13, m.m03, m.m32, m.m12, m.m02, m.m22, m.m21, m.m11, m.m01, m.m30, m.m20, m.m10, m.m31));
-
-			WriteObjectEnd ();
-		}
-
-		public void Write (UnityEngine.Ray r)
-		{
-			WriteObjectStart ();
-			WritePropertyName ("origin");
-			Write (r.origin);
-			WritePropertyName ("direction");
-			Write (r.direction);
-			WriteObjectEnd ();
-		}
-
-		public void Write (UnityEngine.RaycastHit r)
-		{
-			WriteObjectStart ();
-			WritePropertyName ("barycentricCoordinate");
-			Write (r.barycentricCoordinate);
-			WritePropertyName ("distance");
-			Write (r.distance);
-			WritePropertyName ("normal");
-			Write (r.normal);
-			WritePropertyName ("point");
-			Write (r.point);
-			WriteObjectEnd ();
-		}
-
-		//#endif
-		#endregion
 
         public void WriteArrayEnd ()
         {

@@ -290,15 +290,6 @@ namespace LitJson
                 return;
             }
 
-            ulong n_uint64;
-            if (UInt64.TryParse(number, out n_uint64))
-            {
-                token = JsonToken.Long;
-                token_value = n_uint64;
-
-                return;
-            }
-
             // Shouldn't happen, but just in case, return something
             token = JsonToken.Int;
             token_value = 0;
@@ -392,7 +383,7 @@ namespace LitJson
             end_of_json  = true;
 
             if (reader_is_owned)
-                reader.Close ();
+                reader.Dispose();
 
             reader = null;
         }
@@ -423,7 +414,7 @@ namespace LitJson
             }
 
 
-            int[] entry_symbols;
+            int[] entity_symbols;
 
             while (true) {
                 if (parser_return) {
@@ -454,18 +445,18 @@ namespace LitJson
 
                 try {
 
-                    entry_symbols =
+                    entity_symbols =
                         parse_table[current_symbol][current_input];
 
                 } catch (KeyNotFoundException e) {
                     throw new JsonException ((ParserToken) current_input, e);
                 }
 
-                if (entry_symbols[0] == (int) ParserToken.Epsilon)
+                if (entity_symbols[0] == (int) ParserToken.Epsilon)
                     continue;
 
-                for (int i = entry_symbols.Length - 1; i >= 0; i--)
-                    automaton_stack.Push (entry_symbols[i]);
+                for (int i = entity_symbols.Length - 1; i >= 0; i--)
+                    automaton_stack.Push (entity_symbols[i]);
             }
         }
 
