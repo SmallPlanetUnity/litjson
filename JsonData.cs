@@ -115,9 +115,9 @@ namespace LitJson
                 EnsureDictionary ();
                 IList<string> keys = new List<string> ();
 
-                foreach (KeyValuePair<string, JsonData> entity in
+                foreach (KeyValuePair<string, JsonData> entry in
                          object_list) {
-                    keys.Add (entity.Key);
+                    keys.Add (entry.Key);
                 }
 
                 return (ICollection) keys;
@@ -129,9 +129,9 @@ namespace LitJson
                 EnsureDictionary ();
                 IList<JsonData> values = new List<JsonData> ();
 
-                foreach (KeyValuePair<string, JsonData> entity in
+                foreach (KeyValuePair<string, JsonData> entry in
                          object_list) {
-                    values.Add (entity.Value);
+                    values.Add (entry.Value);
                 }
 
                 return (ICollection) values;
@@ -217,14 +217,14 @@ namespace LitJson
                 EnsureDictionary ();
                 JsonData data = ToJsonData (value);
 
-                KeyValuePair<string, JsonData> old_entity = object_list[idx];
+                KeyValuePair<string, JsonData> old_entry = object_list[idx];
 
-                inst_object[old_entity.Key] = data;
+                inst_object[old_entry.Key] = data;
 
-                KeyValuePair<string, JsonData> entity =
-                    new KeyValuePair<string, JsonData> (old_entity.Key, data);
+                KeyValuePair<string, JsonData> entry =
+                    new KeyValuePair<string, JsonData> (old_entry.Key, data);
 
-                object_list[idx] = entity;
+                object_list[idx] = entry;
             }
         }
         #endregion
@@ -245,6 +245,10 @@ namespace LitJson
         }
         #endregion
 
+		public bool ContainsKey(string key) {
+			EnsureDictionary ();
+			return inst_object.ContainsKey (key);
+		}
 
         #region Public Indexers
         public JsonData this[string prop_name] {
@@ -256,18 +260,18 @@ namespace LitJson
             set {
                 EnsureDictionary ();
 
-                KeyValuePair<string, JsonData> entity =
+                KeyValuePair<string, JsonData> entry =
                     new KeyValuePair<string, JsonData> (prop_name, value);
 
                 if (inst_object.ContainsKey (prop_name)) {
                     for (int i = 0; i < object_list.Count; i++) {
                         if (object_list[i].Key == prop_name) {
-                            object_list[i] = entity;
+                            object_list[i] = entry;
                             break;
                         }
                     }
                 } else
-                    object_list.Add (entity);
+                    object_list.Add (entry);
 
                 inst_object[prop_name] = value;
 
@@ -291,12 +295,12 @@ namespace LitJson
                 if (type == JsonType.Array)
                     inst_array[index] = value;
                 else {
-                    KeyValuePair<string, JsonData> entity = object_list[index];
-                    KeyValuePair<string, JsonData> new_entity =
-                        new KeyValuePair<string, JsonData> (entity.Key, value);
+                    KeyValuePair<string, JsonData> entry = object_list[index];
+                    KeyValuePair<string, JsonData> new_entry =
+                        new KeyValuePair<string, JsonData> (entry.Key, value);
 
-                    object_list[index] = new_entity;
-                    inst_object[entity.Key] = value;
+                    object_list[index] = new_entry;
+                    inst_object[entry.Key] = value;
                 }
 
                 json = null;
@@ -469,9 +473,9 @@ namespace LitJson
 
             EnsureDictionary ().Add (key, data);
 
-            KeyValuePair<string, JsonData> entity =
+            KeyValuePair<string, JsonData> entry =
                 new KeyValuePair<string, JsonData> ((string) key, data);
-            object_list.Add (entity);
+            object_list.Add (entry);
 
             json = null;
         }
@@ -668,10 +672,10 @@ namespace LitJson
 
             this[property] = data;
 
-            KeyValuePair<string, JsonData> entity =
+            KeyValuePair<string, JsonData> entry =
                 new KeyValuePair<string, JsonData> (property, data);
 
-            object_list.Insert (idx, entity);
+            object_list.Insert (idx, entry);
         }
 
         void IOrderedDictionary.RemoveAt (int idx)
@@ -783,10 +787,9 @@ namespace LitJson
             if (obj.IsObject) {
                 writer.WriteObjectStart ();
 
-                foreach (DictionaryEntry entity in ((IDictionary)obj))
-                {
-                    writer.WritePropertyName ((string) entity.Key);
-                    WriteJson ((JsonData) entity.Value, writer);
+                foreach (DictionaryEntry entry in ((IDictionary) obj)) {
+                    writer.WritePropertyName ((string) entry.Key);
+                    WriteJson ((JsonData) entry.Value, writer);
                 }
                 writer.WriteObjectEnd ();
 
@@ -967,11 +970,10 @@ namespace LitJson
             get { return Entry; }
         }
 
-        public DictionaryEntry Entry
-        {
+        public DictionaryEntry Entry {
             get {
                 KeyValuePair<string, JsonData> curr = list_enumerator.Current;
-                return new DictionaryEntry(curr.Key, curr.Value);
+                return new DictionaryEntry (curr.Key, curr.Value);
             }
         }
 
